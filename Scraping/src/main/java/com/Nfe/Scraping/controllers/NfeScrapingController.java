@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.Nfe.Scraping.models.NfeScrapingModel;
@@ -14,6 +16,7 @@ import com.Nfe.Scraping.repositories.NfeScrapingRepository;
 import com.Nfe.Scraping.services.NfeScrapingService;
 
 @RestController
+@RequestMapping("/status")
 public class NfeScrapingController {
 	
 	@Autowired
@@ -22,23 +25,17 @@ public class NfeScrapingController {
 	@Autowired
 	NfeScrapingService nfeScrapingService;
 	
-	@GetMapping("/data")
-	public void scrapeAndStoreData() throws IOException {
-		nfeScrapingService.scrapeAndSaveData();
-		
-	}
-	
     @GetMapping
-    public List<NfeScrapingModel> getStatusServico() {
+    public List<NfeScrapingModel> getStatusService() {
         return nfeScrapingRepository.findAll();
     }
 
-//	@GetMapping("/status")
-//	public ResponseEntity<List<NfeScrapingModel>> getCurrentStatus() {
-//		return ResponseEntity.status(HttpStatus.OK).body(nfeScrapingRepository.findAll());
-//	}
-	
-//	@GetMapping("/status/{uf}")
+    @GetMapping("/{uf}")
+    public List<NfeScrapingModel> getStatusServiceByUf(@PathVariable String uf) {
+        return nfeScrapingService.getStatusByUf(uf);
+    }
+    
+    
 //	@GetMapping("/status/{uf}/{datainicio}/{datafim}")
 //	@GetMapping("/status")
 

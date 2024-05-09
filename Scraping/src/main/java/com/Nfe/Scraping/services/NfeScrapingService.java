@@ -45,5 +45,9 @@ public class NfeScrapingService {
 		}
 		return "UP";
 	}
+	
+    public List<NfeScrapingModel> getStatusByUf(String uf) {
+        return nfeScrapingRepository.findByUf(uf);
+    }
 
 }
