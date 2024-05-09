@@ -1,6 +1,9 @@
 package com.Nfe.Scraping.services;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -15,52 +18,32 @@ import com.Nfe.Scraping.repositories.NfeScrapingRepository;
 
 @Service
 public class NfeScrapingService {
-	
-	 @Autowired
-	    private NfeScrapingRepository nfeScrapingRepository;
-	    
-	    public void scrapeAndSaveData() throws IOException {
-	        Document doc = Jsoup.connect("http://www.nfe.fazenda.gov.br/portal/disponibilidade.aspx").get();
-	        Element table = doc.select("table.tabelaListagemDados").first();
-	        
-	        for (Element row : table.select("tr")) {
-	            Elements cols = row.select("td");
-	            if (cols.size() == 2) {
-	                String uf = cols.get(0).text();
-	                String status = cols.get(1).text();
-	                NfeScrapingModel nfe = new NfeScrapingModel();
-	                nfe.setUf(uf);
-	                nfe.setStatus(status);
-	                nfeScrapingRepository.save(nfe);
-	            }
-	        }
-	    }
-	    
-//	    public void scrapeAndSaveData() {
-//	        try {
-//	            Document doc = Jsoup.connect("http://www.nfe.fazenda.gov.br/portal/disponibilidade.aspx").get();
-//	            Elements tables = doc.select("table.tabelaListagemDados");
-//
-//	            for (Element table : tables) {
-//	                Elements rows = table.select("tr");
-//
-//	                for (Element row : rows) {
-//	                    Elements cols = row.select("td");
-//	                    if (cols.size() == 5) { // Verifica se a linha contém os dados desejados
-//	                        String uf = cols.get(0).text();
-//	                        String status = cols.get(1).text();
-//
-//	                        // Salvar os dados no banco de dados
-//	                        NfeScrapingModel nfe = new NfeScrapingModel();
-//	                        nfe.setUf(uf);
-//	                        nfe.setStatus(status);
-//	                        nfeScrapingRepository.save(nfe);
-//	                    }
-//	                }
-//	            }
-//	        } catch (IOException e) {
-//	            e.printStackTrace();
-//	        }
-//	    }
-}
 
+	@Autowired
+	private NfeScrapingRepository nfeScrapingRepository;
+
+	public void scrapeAndSaveData() throws IOException {
+		Document doc = Jsoup.connect("http://www.nfe.fazenda.gov.br/portal/disponibilidade.aspx").get();
+		Element table = doc.select("table.tabelaListagemDados").first();
+		List<NfeScrapingModel> nfeList = new ArrayList<>();
+		for (Element row : table.select("tr")) {
+			Elements cols = row.select("td");
+			if (cols.size() >= 2) {
+				final var uf = cols.get(0).text();
+				nfeList.add(new NfeScrapingModel(uf, this.getStatus(cols.get(5).text()), LocalDateTime.now()));
+			}
+		}
+		nfeScrapingRepository.saveAll(nfeList);
+	}
+
+	private String getStatus(String imageName) {
+		if (imageName.contains("bola_amarela")) {
+			return "WARNING";
+		}
+		if (imageName.contains("bola_vermelha")) {
+			return "DOWN";
+		}
+		return "UP";
+	}
+
+}
