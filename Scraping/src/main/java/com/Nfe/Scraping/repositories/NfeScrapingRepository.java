@@ -1,5 +1,4 @@
 package com.Nfe.Scraping.repositories;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -12,7 +11,4 @@ public interface NfeScrapingRepository extends JpaRepository<NfeScrapingModel, L
 
 	List<NfeScrapingModel> findByUf(String uf);
 	List<NfeScrapingModel> findByUfAndDateBetween(String uf, LocalDateTime start, LocalDateTime end);
-	
-//	@Query(value = "SELECT * FROM nfe_scraping_model WHERE uf = ?1 AND date = ?2", nativeQuery = true)
-//    List<NfeScrapingModel> findByEstadoAndData(String uf, LocalDate date);
 }
