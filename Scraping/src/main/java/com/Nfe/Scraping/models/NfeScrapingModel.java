@@ -7,8 +7,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "TB_NFE_SCRAPING")
 public class NfeScrapingModel {
 
 	@Id
@@ -22,15 +24,15 @@ public class NfeScrapingModel {
 	private String status;
 
 	@Column
-	private LocalDateTime insertDateTime;
+	private LocalDateTime date;
 
 	public NfeScrapingModel() {
 	}
 
-	public NfeScrapingModel(String uf, String status, LocalDateTime insertDateTime) {
+	public NfeScrapingModel(String uf, String status, LocalDateTime date) {
 		this.uf = uf;
 		this.status = status;
-		this.insertDateTime = insertDateTime;
+		this.date = date;
 	}
 
 	public Long getId() {
@@ -55,6 +57,14 @@ public class NfeScrapingModel {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public LocalDateTime getDate() {
+		return date;
+	}
+
+	public void setDate(LocalDateTime date) {
+		this.date = date;
 	}
 
 }
